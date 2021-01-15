@@ -1,22 +1,21 @@
 <template>
   <div class="container column">
     <form class="card card-w30">
-      <div class="form-control">
-        <label for="type">Тип блока</label>
-        <select id="type">
-          <option value="title">Заголовок</option>
-          <option value="subtitle">Подзаголовок</option>
-          <option value="avatar">Аватар</option>
-          <option value="text">Текст</option>
-        </select>
-      </div>
+      <app-select-type
+        title="Тип блока"
+        :items="blockTypeValues"
+        :selectedType="selectedType"
+        @onTypeChange="blockTypeChangeHandler"
+      ></app-select-type>
 
       <div class="form-control">
         <label for="value">Значение</label>
-        <textarea id="value" rows="3"></textarea>
+        <textarea id="value" rows="3" v-model="enteredValue"></textarea>
       </div>
 
-      <button class="btn primary">Добавить</button>
+      <button class="btn primary" :disabled="isAddButtonDisable">
+        Добавить
+      </button>
     </form>
 
     <div class="card card-w70"></div>
@@ -29,7 +28,44 @@
 </template>
 
 <script>
-export default {};
+import AppSelectType from "./AppSelectType.vue";
+export default {
+  components: { AppSelectType },
+  data() {
+    return {
+      blockTypeValues: [
+        {
+          value: "title",
+          text: "Заголовок",
+        },
+        {
+          value: "subtitle",
+          text: "Подзаголовок",
+        },
+        {
+          value: "avatar",
+          text: "Аватар",
+        },
+        {
+          value: "text",
+          text: "Текст",
+        },
+      ],
+      selectedType: "title",
+      enteredValue: "",
+    };
+  },
+  methods: {
+    blockTypeChangeHandler(blockType) {
+      this.selectedType = blockType;
+    },
+  },
+  computed: {
+    isAddButtonDisable() {
+      return this.enteredValue.length < 3;
+    },
+  },
+};
 </script>
 
 <style>
