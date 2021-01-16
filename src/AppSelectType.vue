@@ -15,8 +15,31 @@
 
 <script>
 export default {
-  props: ["title", "items", "selectedType"],
-  emit: ["onTypeChange"],
+  props: {
+    title: {
+      type: String,
+    },
+    selectedType: {
+      type: String,
+      required: true,
+    },
+    items: {
+      type: Array,
+      validator: (prop) =>
+        prop.every(
+          (p) => typeof p.value === "string" && typeof p.text === "string"
+        ),
+    },
+  },
+  emit: {
+    onTypeChange: (type) => {
+      if (type && typeof type === "string") {
+        return true;
+      }
+
+      return false;
+    },
+  },
   data() {
     return {
       selectId: "type" + Math.random(),

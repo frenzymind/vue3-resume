@@ -10,27 +10,52 @@
 
       <div class="form-control">
         <label for="value">Значение</label>
-        <textarea id="value" rows="3" v-model="enteredValue"></textarea>
+        <textarea id="value" rows="3" v-model.trim="enteredValue"></textarea>
       </div>
 
-      <button class="btn primary" :disabled="isAddButtonDisable">
+      <button
+        class="btn primary"
+        :disabled="isAddButtonDisable"
+        @click.prevent="addBlock"
+      >
         Добавить
       </button>
     </form>
 
-    <div class="card card-w70"></div>
+    <div class="card card-w70">
+      <h3 v-if="blocks.length === 0">
+        Добавьте первый блок, чтобы увидеть результат
+      </h3>
+      <component
+        v-for="(block, index) in blocks"
+        :key="index"
+        :is="block.componentName"
+        :payload="block.payload"
+      ></component>
+    </div>
   </div>
-  <div class="container">
-    <p>
-      <button class="btn primary">Загрузить комментарии</button>
-    </p>
-  </div>
+  <app-comments
+    commentsUrl="https://jsonplaceholder.typicode.com/comments?_limit=42"
+  ></app-comments>
 </template>
 
 <script>
 import AppSelectType from "./AppSelectType.vue";
+import AppTitle from "./AppTitle";
+import AppText from "./AppText";
+import AppSubtitle from "./AppSubtitle";
+import AppAvatar from "./AppAvatar";
+import AppComments from "./AppComments.vue";
+
 export default {
-  components: { AppSelectType },
+  components: {
+    AppSelectType,
+    AppTitle,
+    AppSubtitle,
+    AppAvatar,
+    AppText,
+    AppComments,
+  },
   data() {
     return {
       blockTypeValues: [
@@ -51,6 +76,7 @@ export default {
           text: "Текст",
         },
       ],
+      blocks: [],
       selectedType: "title",
       enteredValue: "",
     };
@@ -58,6 +84,17 @@ export default {
   methods: {
     blockTypeChangeHandler(blockType) {
       this.selectedType = blockType;
+    },
+    addBlock() {
+      this.blocks.push({
+        componentName: `app-${this.selectedType}`,
+        payload: this.enteredValue,
+      });
+      this.clear();
+    },
+    clear() {
+      this.selectedType = "title";
+      this.enteredValue = "";
     },
   },
   computed: {
